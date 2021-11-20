@@ -1,0 +1,11 @@
+name = "backend"
+type = "webpack"
+
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+compatibility_date = "2021-11-16"
+kv_namespaces = [ 
+         { binding = "POSTS", id = "07945fb5c0cf48749fbaf197507387e4", preview_id = "498bf15219fc45cdaaea4f4f985567e5" }
+]
