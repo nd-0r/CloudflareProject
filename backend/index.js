@@ -24,12 +24,16 @@ router.get("/posts", async request => {
 	});
 })
 
-router.get("/posts/:id", async request => {
-	let id_re = /^\d+$/
+router.post("/posts/:id", async request => {
+	let dig_re = /^\d+$/
 	const post_id = request.params.id;
+	const votes = request.query.votes;
 
-	if (!id_re.exec(post_id)) {
+	if (!dig_re.exec(post_id)) {
     return new Response("Post ID invalid", { status: 404 });
+	}
+	if (!votes || !dig_re.exec(votes)) {
+		return new Response("Vote count invalid", { status: 404 });
 	}
 
   const post = await POSTS.get(post_id);
@@ -37,6 +41,10 @@ router.get("/posts/:id", async request => {
 	if (!post) {
     return new Response("Post ID not found", { status: 404 });
 	}
+
+  const post_obj = await JSON.parse(post);
+	post_obj.votes = votes;
+	await POSTS.put(post.id, JSON.stringify(post_obj));
 
 	return new Response(post, {
 		headers: {
