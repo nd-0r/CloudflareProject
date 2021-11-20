@@ -24,6 +24,29 @@ router.get("/posts", async request => {
 	});
 })
 
+router.get("/posts/:id", async request => {
+	let id_re = /^\d+$/
+	const post_id = request.params.id;
+
+	if (!id_re.exec(post_id)) {
+    return new Response("Post ID invalid", { status: 404 });
+	}
+
+  const post = await POSTS.get(post_id);
+
+	if (!post) {
+    return new Response("Post ID not found", { status: 404 });
+	}
+
+	return new Response(post, {
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*"
+		},
+		status: 200
+	});
+});
+
 router.post("/posts", async request => {
 	if (!request.headers.get("Content-Type").includes("text/plain")) {
 		return new Response("No JSON provided", { status: 400 });
@@ -56,6 +79,8 @@ router.post("/posts", async request => {
 		return new Response("Post has extraneous fields", { status: 400 });
 	}
 
+	post.votes = 0; // posts start with no votes
+
 	await POSTS.put(post.id, JSON.stringify(post));
 
 	return new Response("success", { 
@@ -65,7 +90,7 @@ router.post("/posts", async request => {
 		},
 		status: 200
 	});
-})
+});
 
 router.all("*", () => new Response("404, not found!", { status: 404 }))
 
