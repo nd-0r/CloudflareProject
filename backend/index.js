@@ -29,11 +29,11 @@ router.post("/posts/:id", async request => {
 	const post_id = request.params.id;
 	const votes = request.query.votes;
 
-	if (!dig_re.exec(post_id)) {
-    return new Response("Post ID invalid", { status: 404 });
+	if (!post_id || !dig_re.exec(post_id)) {
+    return new Response("Post ID invalid", { status: 400 });
 	}
 	if (!votes || !dig_re.exec(votes)) {
-		return new Response("Vote count invalid", { status: 404 });
+		return new Response("Vote count invalid", { status: 400 });
 	}
 
   const post = await POSTS.get(post_id);
@@ -43,8 +43,8 @@ router.post("/posts/:id", async request => {
 	}
 
   const post_obj = await JSON.parse(post);
-	post_obj.votes = votes;
-	await POSTS.put(post.id, JSON.stringify(post_obj));
+	post_obj.votes = Number(votes);
+	await POSTS.put(post_id, JSON.stringify(post_obj));
 
 	return new Response(post, {
 		headers: {
@@ -68,7 +68,7 @@ router.post("/posts", async request => {
 	}
 
   if (!post.id) {
-		return new Response("Post has no title", { status: 400 });
+		return new Response("Post has no id", { status: 400 });
 	}
 	if (!post.title) {
 		return new Response("Post has no title", { status: 400 });
