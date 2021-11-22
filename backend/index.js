@@ -70,6 +70,9 @@ router.post("/posts", async request => {
   if (!post.id) {
 		return new Response("Post has no id", { status: 400 });
 	}
+	if (post.type === undefined) {
+		return new Response("Post has no type", { status: 400 });
+	}
 	if (!post.title) {
 		return new Response("Post has no title", { status: 400 });
 	}
@@ -83,7 +86,7 @@ router.post("/posts", async request => {
 		return new Response("Post has no date", { status: 400 });
   }
 	
-	if (Object.keys(post).length > 5) {
+	if (Object.keys(post).length > 6) {
 		return new Response("Post has extraneous fields", { status: 400 });
 	}
 
